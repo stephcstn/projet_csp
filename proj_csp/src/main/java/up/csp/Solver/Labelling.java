@@ -1,4 +1,6 @@
 package up.csp.Solver;
 
-public class Labelling {
+public enum Labelling {
+    STANDARD,
+    MRV; // Minimum Remaining Values
 }
