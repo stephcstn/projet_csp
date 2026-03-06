@@ -8,25 +8,23 @@ import java.util.List;
 public class ForwardChecking {
 
     /**
-     * Exécute la réduction des domaines suite à une nouvelle assignation.
-     * @return true si tous les domaines restent non vides, false sinon (échec).
+     * Exécute la réduction des domaines et vérifie si la recherche peut continuer. [cite: 5, 57]
      */
     public boolean run(Assignment lastAssignment, List<Variable> allVariables, List<Constraint> constraints) {
         Variable trigger = lastAssignment.getVariable();
 
-        // Pour chaque contrainte impliquant la variable qui vient d'être modifiée
+        // 1. Demander aux contraintes de filtrer les domaines voisins [cite: 64, 76]
         for (Constraint constraint : constraints) {
-            // On demande à la contrainte de réduire les domaines des variables voisines
             constraint.reduce(trigger, allVariables);
         }
 
-        // Vérification : si un domaine devient vide, c'est un échec (retourArriere)
+        // 2. Vérifier si une variable s'est retrouvée avec un domaine vide [cite: 60, 70]
         for (Variable v : allVariables) {
-            if (v.getDomain().isEmpty()) { // Suppose une méthode isEmpty() dans Domain
-                return false;
+            if (v.getDomain().isEmpty()) {
+                return false; // Déclenche le retour arrière (backtrack) [cite: 70]
             }
         }
 
-        return true; // Succès de la réduction
+        return true; // La réduction est valide, on peut continuer [cite: 67]
     }
 }

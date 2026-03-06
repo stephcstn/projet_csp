@@ -1,81 +1,100 @@
 package up.csp.Controller;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import up.csp.Model.CSP;
+import up.csp.Model.Variable;
 import up.csp.Solver.Backtracking;
-import up.csp.Solver.Labelling;
+import up.csp.apps.SudokuApp;
+import up.csp.apps.DamesApp;
+import java.util.List;
 
 public class MainController {
 
-    @FXML
-    private ComboBox<String> appSelector; // Sudoku, Dames [cite: 23]
+    // BIEN VÉRIFIER CETTE LIGNE (4 paramètres)
+    public void handleSolve(String appName, String strategyName, Label status, StackPane container) {
+        container.getChildren().clear(); // Nettoie la grille précédente
 
-    @FXML
-    private ComboBox<String> strategySelector; // ex: MRV [cite: 33]
+        // 1. Création du problème
+        CSP problem = appName.equals("Sudoku") ? SudokuApp.createSudoku() : DamesApp.createDames(8);
 
-    @FXML
-    private Button solveButton;
-
-    @FXML
-    private Label statusLabel;
-
-    /**
-     * Initialise les options de l'interface au démarrage.
-     */
-    @FXML
-    public void initialize() {
-        appSelector.getItems().addAll("Sudoku", "Jeu de Dames");
-        strategySelector.getItems().addAll("Standard", "MRV (Minimum Remaining Values)");
-
-        statusLabel.setText("Prêt à résoudre.");
-    }
-
-    /**
-     * Gère l'action du bouton de résolution selon le scénario principal 1. [cite: 12, 19]
-     */
-    @FXML
-    private void handleSolve() {
-        String selectedApp = appSelector.getValue();
-        String selectedStrategy = strategySelector.getValue();
-
-        if (selectedApp == null) {
-            statusLabel.setText("Veuillez choisir une application.");
-            return;
-        }
-
-        statusLabel.setText("Résolution en cours...");
-
-        // 1. Initialisation du CSP selon l'application choisie [cite: 12, 42]
-        CSP problem = setupProblem(selectedApp);
-
-        // 2. Configuration technique par le développeur/utilisateur [cite: 13, 20]
+        // 2. Résolution
         Backtracking solver = new Backtracking();
-        if ("MRV (Minimum Remaining Values)".equals(selectedStrategy)) {
-            solver.setLabellingStrategy(Labelling.MRV);
-        }
-
-        // 3. Lancement de la résolution avec Backtracking + FC [cite: 5, 29]
         boolean success = solver.solve(problem);
 
-        // 4. Affichage du résultat ou signalement de l'échec [cite: 31, 35]
         if (success) {
-            statusLabel.setText("Succès : Solution trouvée !");
-            updateViewWithSolution(problem);
+            status.setText("Solution trouvée !");
+            drawGrid(appName, problem.getVariables(), container);
         } else {
-            statusLabel.setText("Échec : Aucune solution possible.");
+            status.setText("Aucune solution possible.");
         }
     }
 
-    private CSP setupProblem(String appName) {
-        // Logique pour générer les variables et contraintes spécifiques [cite: 42, 48, 53]
-        // Exemple : if (appName.equals("Sudoku")) return new SudokuCSP();
-        return new CSP();
+    // Méthode pour le Sudoku (Affiche le chiffre)
+    private void renderCell(GridPane grid, int row, int col, Variable var, boolean isDark) {
+        StackPane cell = new StackPane();
+        Rectangle box = new Rectangle(45, 45);
+        box.setFill(Color.WHITE);
+        box.setStroke(Color.GRAY);
+
+        // Récupération de la valeur (1-9)
+        String val = (var.getAssignedValue() != null) ? var.getAssignedValue().toString() : "";
+        Text text = new Text(val);
+        text.setStyle("-fx-font-size: 18px;");
+
+        cell.getChildren().addAll(box, text);
+        grid.add(cell, col, row);
     }
 
-    private void updateViewWithSolution(CSP solvedCsp) {
-        // Met à jour la grille ou le plateau dans la Vue [cite: 31, 55]
+    // Méthode pour les Dames (Affiche la couronne)
+    private void renderCellForDames(GridPane grid, int row, int col, boolean hasQueen, boolean isDark) {
+        StackPane cell = new StackPane();
+        Rectangle box = new Rectangle(50, 50);
+
+        // Couleurs de l'échiquier
+        box.setFill(isDark ? Color.web("#b58863") : Color.web("#f0d9b5"));
+        box.setStroke(Color.BLACK);
+
+        Text text = new Text(hasQueen ? "👑" : "");
+        text.setStyle("-fx-font-size: 24px;");
+
+        cell.getChildren().addAll(box, text);
+        grid.add(cell, col, row);
     }
+
+
+    private void drawGrid(String type, List<Variable> variables, StackPane container) {
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setPadding(new Insets(10));
+
+        if (type.equals("Sudoku")) {
+            // Sudoku : 81 variables = 81 cases
+            for (int i = 0; i < variables.size(); i++) {
+                renderCell(grid, i / 9, i % 9, variables.get(i), false);
+            }
+        } else {
+            // Dames : 8 variables = plateau 8x8 (64 cases)
+            for (int row = 0; row < 8; row++) {
+                Variable rowVar = variables.get(row);
+                Integer queenCol = rowVar.getAssignedValue(); // La valeur (1-8) est la colonne
+
+                for (int col = 0; col < 8; col++) {
+                    // On place la couronne seulement si la valeur de la variable correspond à cette colonne
+                    // Note : On fait col + 1 car ton Domain commence à 1
+                    boolean hasQueen = (queenCol != null && queenCol == (col + 1));
+                    boolean isDark = (row + col) % 2 == 1; // Couleur alternée pour l'échiquier
+
+                    renderCellForDames(grid, row, col, hasQueen, isDark);
+                }
+            }
+        }
+        container.getChildren().add(grid);
+    }
+
 }

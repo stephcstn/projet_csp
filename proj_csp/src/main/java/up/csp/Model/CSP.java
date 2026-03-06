@@ -12,11 +12,26 @@ public class CSP {
         this.constraints = new ArrayList<>();
     }
 
-    public void addVariable(Variable v) { variables.add(v); }
-    public void addConstraint(Constraint c) { constraints.add(c); }
+    public void addVariable(Variable v) {
+        variables.add(v);
+    }
 
-    public void solve() {
-        // Logique de lancement de l'algorithme de résolution
-        System.out.println("Lancement de la résolution...");
+    public void addConstraint(Constraint c) {
+        constraints.add(c);
+    }
+
+    /**
+     * Retourne la liste des variables du problème.
+     * Indispensable pour que le Backtracking puisse itérer dessus.
+     */
+    public List<Variable> getVariables() {
+        return variables;
+    }
+
+    /**
+     * Retourne la liste des contraintes à respecter.
+     */
+    public List<Constraint> getConstraints() {
+        return constraints;
     }
 }
