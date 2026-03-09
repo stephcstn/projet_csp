@@ -35,14 +35,13 @@ public class MainController {
         }
     }
 
-    // Méthode pour le Sudoku (Affiche le chiffre)
-    private void renderCell(GridPane grid, int row, int col, Variable var, boolean isDark) {
+    // DÉFINITION : 4 ARGUMENTS (Correct pour Sudoku)
+    private void renderCell(GridPane grid, int row, int col, Variable var) {
         StackPane cell = new StackPane();
         Rectangle box = new Rectangle(45, 45);
         box.setFill(Color.WHITE);
         box.setStroke(Color.GRAY);
 
-        // Récupération de la valeur (1-9)
         String val = (var.getAssignedValue() != null) ? var.getAssignedValue().toString() : "";
         Text text = new Text(val);
         text.setStyle("-fx-font-size: 18px;");
@@ -51,22 +50,23 @@ public class MainController {
         grid.add(cell, col, row);
     }
 
-    // Méthode pour les Dames (Affiche la couronne)
+    // DÉFINITION : 5 ARGUMENTS (Correct pour Dames)
     private void renderCellForDames(GridPane grid, int row, int col, boolean hasQueen, boolean isDark) {
         StackPane cell = new StackPane();
         Rectangle box = new Rectangle(50, 50);
-
-        // Couleurs de l'échiquier
         box.setFill(isDark ? Color.web("#b58863") : Color.web("#f0d9b5"));
         box.setStroke(Color.BLACK);
 
-        Text text = new Text(hasQueen ? "👑" : "");
-        text.setStyle("-fx-font-size: 24px;");
+        Text text = new Text();
+        if (hasQueen) {
+            text.setText("Q"); // Utilise "Q" si l'émoji ne passe pas
+            text.setFill(Color.DARKRED); // Couleur vive pour être sûr de la voir
+            text.setStyle("-fx-font-size: 30px; -fx-font-weight: bold;");
+        }
 
         cell.getChildren().addAll(box, text);
         grid.add(cell, col, row);
     }
-
 
     private void drawGrid(String type, List<Variable> variables, StackPane container) {
         GridPane grid = new GridPane();
@@ -74,22 +74,25 @@ public class MainController {
         grid.setPadding(new Insets(10));
 
         if (type.equals("Sudoku")) {
-            // Sudoku : 81 variables = 81 cases
+            // --- LOGIQUE SUDOKU ---
+            // On a 81 variables (une par case), donc on boucle sur la liste
             for (int i = 0; i < variables.size(); i++) {
-                renderCell(grid, i / 9, i % 9, variables.get(i), false);
+                int row = i / 9;
+                int col = i % 9;
+                // Appel à la méthode de rendu à 4 arguments
+                renderCell(grid, row, col, variables.get(i));
             }
         } else {
-            // Dames : 8 variables = plateau 8x8 (64 cases)
+            // --- LOGIQUE DAMES ---
+            // On a 8 variables (une par ligne), on dessine 64 cases (8x8)
             for (int row = 0; row < 8; row++) {
                 Variable rowVar = variables.get(row);
-                Integer queenCol = rowVar.getAssignedValue(); // La valeur (1-8) est la colonne
+                Integer queenCol = rowVar.getAssignedValue();
 
                 for (int col = 0; col < 8; col++) {
-                    // On place la couronne seulement si la valeur de la variable correspond à cette colonne
-                    // Note : On fait col + 1 car ton Domain commence à 1
                     boolean hasQueen = (queenCol != null && queenCol == (col + 1));
-                    boolean isDark = (row + col) % 2 == 1; // Couleur alternée pour l'échiquier
-
+                    boolean isDark = (row + col) % 2 == 1;
+                    // Appel à la méthode de rendu à 5 arguments
                     renderCellForDames(grid, row, col, hasQueen, isDark);
                 }
             }

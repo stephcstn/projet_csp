@@ -10,14 +10,14 @@ public class BacktrackStack {
     }
 
     /**
-     * Ajoute une nouvelle étape à la pile [cite: 69]
+     * Ajoute une nouvelle étape à la pile
      */
     public void push(Variable var, int val, String reason) {
         stack.push(new Assignment(var, val, reason));
     }
 
     /**
-     * Récupère la dernière assignation pour le retour arrière [cite: 70]
+     * Récupère la dernière assignation pour le retour arrière
      */
     public Assignment pop() {
         return stack.isEmpty() ? null : stack.pop();

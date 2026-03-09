@@ -3,7 +3,7 @@ package up.csp.Model;
 public class Variable {
     private String name;
     private Domain domain;
-    private Integer assignedValue = null; // null signifie que la variable n'est pas encore fixée [cite: 57, 77]
+    private Integer assignedValue = null; // null signifie que la variable n'est pas encore fixée
 
     public Variable(String name, Domain domain) {
         this.name = name;
@@ -11,14 +11,14 @@ public class Variable {
     }
 
     /**
-     * Fixe la valeur de la variable pendant la recherche[cite: 57, 69].
+     * Fixe la valeur de la variable pendant la recherche.
      */
     public void setAssignedValue(Integer value) {
         this.assignedValue = value;
     }
 
     /**
-     * Récupère la valeur actuelle (utile pour isSatisfied() dans les contraintes)[cite: 57, 76].
+     * Récupère la valeur actuelle (utile pour isSatisfied() dans les contraintes).
      */
     public Integer getAssignedValue() {
         return assignedValue;
