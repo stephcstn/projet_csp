@@ -30,7 +30,7 @@ public class Backtracking {
         Variable current = selectVariable(vars);
         if (current == null) return true; // Toutes les variables sont assignées [cite: 30]
 
-        // 2. Tester les valeurs possibles du domaine [cite: 75]
+        // 2. Tester les valeurs possibles du domaine
         for (int val = 1; val <= 9; val++) {
             if (current.getDomain().isPresent(val)) {
 
