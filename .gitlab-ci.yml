@@ -33,31 +33,29 @@ stages:
 build-job:
   stage: build
   script:
-    - echo "--- ETAPE 1 :COMPILATION ---"
-    - cd proj_csp  # <--- ON ENTRE DANS LE DOSSIER DU CODE
-    - chmod +x mvnw
-    - ./mvnw clean compile
-    - echo "Succès :Code compilé."
+    - echo "--- ETAPE 1 : COMPILATION ---"
+    - cd proj_csp
+    # On utilise 'mvn' (le global) au lieu de './mvnw'
+    - mvn clean compile
+    - echo "Succès : Code compilé."
 
 unit-test-job:
   stage: test
   script:
-    - echo "--- ETAPE 2 :TESTS ---"
-    - cd proj_csp  # <--- IDEM ICI
-    - chmod +x mvnw
-    - ./mvnw test
+    - echo "--- ETAPE 2 : TESTS ---"
+    - cd proj_csp
+    - mvn test
   artifacts:
     when: always
     reports:
-      junit: proj_csp/target/surefire-reports/TEST-*.xml # Note le chemin ici aussi
+      junit: proj_csp/target/surefire-reports/TEST-*.xml
 
 deploy-job:
   stage: deploy
   script:
-    - echo "--- ETAPE 3 :JAR ---"
-    - cd proj_csp  # <--- ET ICI
-    - chmod +x mvnw
-    - ./mvnw package -DskipTests
+    - echo "--- ETAPE 3 : GENERATION DU JAR ---"
+    - cd proj_csp
+    - mvn package -DskipTests
   artifacts:
     paths:
       - proj_csp/target/*.jar
