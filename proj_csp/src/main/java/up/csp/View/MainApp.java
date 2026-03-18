@@ -14,35 +14,49 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) {
         MainController controller = new MainController();
 
-        // 1. Les contrôles
+        // 1. Sélecteur de Jeu
         ComboBox<String> appSelector = new ComboBox<>();
         appSelector.getItems().addAll("Sudoku", "Jeu de Dames");
         appSelector.setValue("Sudoku");
 
+        // 2. Sélecteur de Stratégie (MRV vs Standard)
         ComboBox<String> strategySelector = new ComboBox<>();
         strategySelector.getItems().addAll("Standard", "MRV");
         strategySelector.setValue("Standard");
 
+        // 3. NOUVEAU : Sélecteur de Mode (Déterministe vs Aléatoire)
+        ComboBox<String> modeSelector = new ComboBox<>();
+        modeSelector.getItems().addAll("Déterministe", "Aléatoire");
+        modeSelector.setValue("Déterministe");
+
         Button solveButton = new Button("Lancer la résolution");
         Label statusLabel = new Label("Prêt");
-
-        // 2. Le conteneur pour la grille (C'est lui l'argument "resultContainer")
         StackPane resultContainer = new StackPane();
-        resultContainer.setPadding(new Insets(20));
 
-        // 3. L'action du bouton (Appel avec 4 arguments)
+        // 4. Mise à jour de l'action du bouton (Passage de 5 arguments)
         solveButton.setOnAction(e -> controller.handleSolve(
                 appSelector.getValue(),
                 strategySelector.getValue(),
+                modeSelector.getValue(), // On envoie le choix du mode ici
                 statusLabel,
                 resultContainer
         ));
 
-        VBox layout = new VBox(15, new Label("CONFIGURATEUR CSP"), appSelector, strategySelector, solveButton, statusLabel, resultContainer);
-        layout.setAlignment(Pos.TOP_CENTER);
-        layout.setPadding(new Insets(20));
+        // Mise en page
+        VBox controls = new VBox(10,
+                new Label("Jeu :"), appSelector,
+                new Label("Heuristique :"), strategySelector,
+                new Label("Mode de recherche :"), modeSelector, // Ajout au layout
+                solveButton, statusLabel
+        );
+        controls.setAlignment(Pos.CENTER);
+        controls.setPadding(new Insets(15));
 
-        primaryStage.setScene(new Scene(layout, 600, 800));
+        BorderPane root = new BorderPane();
+        root.setTop(controls);
+        root.setCenter(resultContainer);
+
+        primaryStage.setScene(new Scene(root, 600, 850));
         primaryStage.setTitle("up.csp - Solveur Graphique");
         primaryStage.show();
     }

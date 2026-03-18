@@ -10,6 +10,7 @@ import javafx.scene.text.Text;
 import up.csp.Model.CSP;
 import up.csp.Model.Variable;
 import up.csp.Solver.Backtracking;
+import up.csp.Solver.Labelling;
 import up.csp.apps.SudokuApp;
 import up.csp.apps.DamesApp;
 import java.util.List;
@@ -17,21 +18,21 @@ import java.util.List;
 public class MainController {
 
     // BIEN VÉRIFIER CETTE LIGNE (4 paramètres)
-    public void handleSolve(String appName, String strategyName, Label status, StackPane container) {
-        container.getChildren().clear(); // Nettoie la grille précédente
+    public void handleSolve(String app, String strat, String mode, Label status, StackPane container) {
+        container.getChildren().clear();
+        CSP problem = app.equals("Sudoku") ? SudokuApp.createSudoku() : DamesApp.createDames(8);
 
-        // 1. Création du problème
-        CSP problem = appName.equals("Sudoku") ? SudokuApp.createSudoku() : DamesApp.createDames(8);
-
-        // 2. Résolution
         Backtracking solver = new Backtracking();
-        boolean success = solver.solve(problem);
 
-        if (success) {
-            status.setText("Solution trouvée !");
-            drawGrid(appName, problem.getVariables(), container);
+        // Configuration dynamique
+        solver.setLabellingStrategy(strat.equals("MRV") ? Labelling.MRV : Labelling.STANDARD);
+        solver.setRandomized(mode.equals("Aléatoire")); // On active l'aléa ici
+
+        if (solver.solve(problem)) {
+            status.setText("Solution trouvée (" + mode + ") !");
+            drawGrid(app, problem.getVariables(), container);
         } else {
-            status.setText("Aucune solution possible.");
+            status.setText("Échec de la résolution.");
         }
     }
 
