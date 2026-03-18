@@ -52,7 +52,6 @@ build-job:
     
     - echo "--- NETTOYAGE ET COMPILATION ---"
     - cd proj_csp
-    - rm -f src/main/java/module-info.java
     - mvn $MAVEN_CLI_OPTS clean compile
   artifacts:
     paths:
@@ -65,7 +64,6 @@ test-job:
   script:
     - echo "--- RECHERCHE DES TESTS JUNIT 5 ---"
     - cd proj_csp
-    - rm -f src/main/java/module-info.java
     - mvn $MAVEN_CLI_OPTS test -Dsurefire.includeJUnit5Engines=junit-jupiter
   artifacts:
     when: always
