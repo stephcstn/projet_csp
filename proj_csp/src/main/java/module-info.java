@@ -1,6 +1,7 @@
 module up.csp {
     requires javafx.controls;
     requires javafx.graphics;
+    requires javafx.swing;
 
     exports up.csp.View;
     exports up.csp.Controller;
