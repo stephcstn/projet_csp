@@ -16,45 +16,53 @@
 # This specific template is located at:
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
 
-image: debian:latest # Image debian legere
+image: debian:latest
 
-stages:          # List of stages for jobs, and their order of execution
+stages:
   - build
-  - test 
+  - test
+  - deploy
 
 variables:
+  # Configuration du Proxy de l'université
   HTTPS_PROXY: "http://cache.univ-poitiers.fr:3128"
   HTTP_PROXY: "http://cache.univ-poitiers.fr:3128"
+  # Options pour forcer Maven à passer par le proxy
   MAVEN_CLI_OPTS: "-Dhttp.proxyHost=cache.univ-poitiers.fr -Dhttp.proxyPort=3128 -Dhttps.proxyHost=cache.univ-poitiers.fr -Dhttps.proxyPort=3128"
 
 before_script:
   - apt-get update
-  - apt-get install -y openjdk-25-jdk maven
+  # On installe Java 17 (plus stable pour vos projets) et Maven
+  - apt-get install -y openjdk-17-jdk maven
 
-build-job:       # This job runs in the build stage, which runs first.
+build-job:
   stage: build
   script:
-    - echo "Compilation du projet"
-    - java -version
-    - mvn -version
-    - cd super-sudo
-    - mvn $MAVEN_CLI_OPTS compile
+    - echo "--- ETAPE 1 :COMPILATION VIA PROXY ---"
+    - cd proj_csp
+    - mvn $MAVEN_CLI_OPTS clean compile
   artifacts:
     paths:
-      - super-sudo/target/
+      - proj_csp/target/
     expire_in: 1 week
 
-test-job:   # This job runs in the test stage.
-  stage: test    # It only starts when the job in the build stage completes successfully.
-  needs:
-    - build-job
+test-job:
+  stage: test
+  needs: ["build-job"]
   script:
-    - echo "Lancement des tests JUnit"
-    - cd super-sudo
+    - echo "--- ETAPE 2 :TESTS JUNIT ---"
+    - cd proj_csp
     - mvn $MAVEN_CLI_OPTS test
   artifacts:
     when: always
     reports:
-      junit:
-        - super-sudo/target/surefire-reports/TEST-*.xml
+      junit: proj_csp/target/surefire-reports/TEST-*.xml
     expire_in: 1 week
+
+deploy-job:
+  stage: deploy
+  script:
+    - echo "--- ETAPE 3 :DEPLOIEMENT ---"
+    - echo "TAG détecté = ${CI_COMMIT_TAG}"
+  only:
+    - tags
