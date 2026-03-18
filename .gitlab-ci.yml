@@ -31,7 +31,7 @@ build:
     # On compile tous les fichiers .java du dossier src vers un dossier bin
     - mkdir -p bin
     - javac -d bin $(find src/main/java -name "*.java")
-    - echo "Succès : Compilation terminée."
+    - echo "Succès :Compilation terminée."
   artifacts:
     paths:
       - proj_csp/bin/
