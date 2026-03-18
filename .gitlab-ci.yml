@@ -18,46 +18,36 @@
 
 image: maven:3.9.6-eclipse-temurin-17
 
-variables:
-  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
-
-cache:
-  paths:
-    - .m2/repository
-
 stages:
   - build
   - test
   - deploy
 
-build-job:
+build:
   stage: build
   script:
-    - echo "--- ETAPE 1 :COMPILATION ---"
+    - echo "--- COMPILATION ---"
     - cd proj_csp
-    # On utilise 'mvn' (le global) au lieu de './mvnw'
-    - mvn clean compile
-    - echo "Succès :Code compilé."
-
-unit-test-job:
-  stage: test
-  script:
-    - echo "--- ETAPE 2 :TESTS ---"
-    - cd proj_csp
-    - mvn test
-  artifacts:
-    when: always
-    reports:
-      junit: proj_csp/target/surefire-reports/TEST-*.xml
-
-deploy-job:
-  stage: deploy
-  script:
-    - echo "--- ETAPE 3 :GENERATION DU JAR ---"
-    - cd proj_csp
-    - mvn package -DskipTests
+    # On utilise '-o' pour le mode OFFLINE (très important à la fac)
+    # On ne fait pas de 'clean' pour éviter de chercher le plugin sur le web
+    - mvn compile -o 
   artifacts:
     paths:
-      - proj_csp/target/*.jar
+      - proj_csp/target/
+    expire_in: 1 hour  # <--- OBLIGATOIRE selon ton cours (sécurité)
+
+test:
+  stage: test
+  script:
+    - echo "--- EXECUTION DES TESTS ---"
+    - cd proj_csp
+    - mvn test -o
+  # On ne met pas d'artifacts ici pour ne pas encombrer le serveur de la fac
+
+deploy:
+  stage: deploy
+  script:
+    - echo " ==== ATTENTION ==== "
+    - echo "Déploiement détecté pour le TAG = ${CI_COMMIT_TAG}"
   only:
-    - main
+    - tags  # Ce job ne s'affichera que si tu crées un "Tag" sur Git
