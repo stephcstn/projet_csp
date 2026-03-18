@@ -33,16 +33,16 @@ stages:
 build-job:
   stage: build
   script:
-    - echo "--- ETAPE 1 : COMPILATION ---"
+    - echo "--- ETAPE 1 :COMPILATION ---"
     - cd proj_csp  # <--- ON ENTRE DANS LE DOSSIER DU CODE
     - chmod +x mvnw
     - ./mvnw clean compile
-    - echo "Succès : Code compilé."
+    - echo "Succès :Code compilé."
 
 unit-test-job:
   stage: test
   script:
-    - echo "--- ETAPE 2 : TESTS ---"
+    - echo "--- ETAPE 2 :TESTS ---"
     - cd proj_csp  # <--- IDEM ICI
     - chmod +x mvnw
     - ./mvnw test
@@ -54,7 +54,7 @@ unit-test-job:
 deploy-job:
   stage: deploy
   script:
-    - echo "--- ETAPE 3 : JAR ---"
+    - echo "--- ETAPE 3 :JAR ---"
     - cd proj_csp  # <--- ET ICI
     - chmod +x mvnw
     - ./mvnw package -DskipTests
