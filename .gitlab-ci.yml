@@ -39,7 +39,7 @@ build-job:
   script:
     - echo "--- ETAPE 1 :COMPILATION VIA PROXY ---"
     - cd proj_csp
-    - mvn $MAVEN_CLI_OPTS clean compile
+    - - mvn $MAVEN_CLI_OPTS clean compile -Dmaven.compiler.excludes=module-info.java
   artifacts:
     paths:
       - proj_csp/target/
