@@ -16,41 +16,45 @@
 # This specific template is located at:
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
 
-image: eclipse-temurin:17-jdk-jammy # Une image Java pure, sans Maven qui cherche le web
+image: debian:latest # Image debian legere
 
-stages:
+stages:          # List of stages for jobs, and their order of execution
   - build
-  - test
-  - deploy
+  - test 
 
-build:
+variables:
+  HTTPS_PROXY: "http://cache.univ-poitiers.fr:3128"
+  HTTP_PROXY: "http://cache.univ-poitiers.fr:3128"
+  MAVEN_CLI_OPTS: "-Dhttp.proxyHost=cache.univ-poitiers.fr -Dhttp.proxyPort=3128 -Dhttps.proxyHost=cache.univ-poitiers.fr -Dhttps.proxyPort=3128"
+
+before_script:
+  - apt-get update
+  - apt-get install -y openjdk-25-jdk maven
+
+build-job:       # This job runs in the build stage, which runs first.
   stage: build
   script:
-    - echo "--- COMPILATION DE LA LOGIQUE (SANS JAVAFX) ---"
-    - cd proj_csp
-    - mkdir -p bin
-    - env | grep -iE "proxy|http"
-    # On cherche tous les fichiers .java SAUF le module-info qui bloque tout
-    - javac -d bin $(find src/main/java -name "*.java" ! -name "module-info.java")
-    - echo "Succès :La logique du solveur a été compilée."
+    - echo "Compilation du projet"
+    - java -version
+    - mvn -version
+    - cd super-sudo
+    - mvn $MAVEN_CLI_OPTS compile
   artifacts:
     paths:
-      - proj_csp/bin/
+      - super-sudo/target/
     expire_in: 1 week
 
-test:
-  stage: test
+test-job:   # This job runs in the test stage.
+  stage: test    # It only starts when the job in the build stage completes successfully.
+  needs:
+    - build-job
   script:
-    - echo "--- EXECUTION SIMPLE ---"
-    - cd proj_csp
-    # On lance une classe principale (si tu en as une) pour montrer que ça tourne
-    # Remplace 'Main' par le nom de ta classe principale
-    - java -cp bin Main || echo "Le programme s'est lancé (pas de tests JUnit possibles sans internet)"
-
-deploy:
-  stage: deploy
-  script:
-    - echo " ==== ATTENTION ==== "
-    - echo "TAG détecté = ${CI_COMMIT_TAG}"
-  only:
-    - tags
+    - echo "Lancement des tests JUnit"
+    - cd super-sudo
+    - mvn $MAVEN_CLI_OPTS test
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - super-sudo/target/surefire-reports/TEST-*.xml
+    expire_in: 1 week
