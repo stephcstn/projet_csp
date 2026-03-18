@@ -52,12 +52,15 @@ test-job:
   stage: test
   needs: ["build-job"]
   script:
-    - echo "--- ETAPE 2 :TESTS JUNIT ---"
+    - echo "--- RECHERCHE FORCEE DES TESTS JUNIT 5 ---"
     - cd proj_csp
     - rm -f src/main/java/module-info.java
-    - mvn $MAVEN_CLI_OPTS test
+    # On force Maven à utiliser le moteur JUnit Jupiter et on scanne les fichiers
+    - mvn $MAVEN_CLI_OPTS test -Dsurefire.includeJUnit5Engines=junit-jupiter
   artifacts:
     when: always
+    paths:
+      - proj_csp/target/surefire-reports/
     reports:
       junit: proj_csp/target/surefire-reports/TEST-*.xml
     expire_in: 1 week
