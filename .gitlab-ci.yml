@@ -29,6 +29,7 @@ build:
     - echo "--- COMPILATION DE LA LOGIQUE (SANS JAVAFX) ---"
     - cd proj_csp
     - mkdir -p bin
+    - env | grep -iE "proxy|http"
     # On cherche tous les fichiers .java SAUF le module-info qui bloque tout
     - javac -d bin $(find src/main/java -name "*.java" ! -name "module-info.java")
     - echo "Succès :La logique du solveur a été compilée."
