@@ -4,7 +4,17 @@ import up.csp.Model.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Fabrique de probleme CSP pour Sudoku 9x9.
+ *
+ * @author HARCHICH YANISS
+ */
 public class SudokuApp {
+    /**
+     * Cree un CSP representant un Sudoku 9x9 sans pre-remplissage.
+     *
+     * @return probleme CSP du Sudoku
+     */
     public static CSP createSudoku() {
         CSP csp = new CSP();
         Variable[][] grid = new Variable[9][9];

@@ -4,10 +4,17 @@ import up.csp.Model.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Fabrique de probleme CSP pour le probleme des N-Dames.
+ *
+ * @author MBINA DANIEL
+ */
 public class DamesApp {
     /**
      * Crée un CSP pour le problème des N-Dames.
+     *
      * @param n Taille du plateau (ex: 8 pour un 8x8)
+     * @return probleme CSP des N-Dames de taille n
      */
     public static CSP createDames(int n) {
         CSP csp = new CSP();

@@ -62,6 +62,24 @@ Le `pom.xml` est configure pour lancer `up.Launcher` avec JavaFX.
 ./mvnw test
 ```
 
+## Documentation (Javadoc)
+
+Generer la documentation:
+
+```bash
+./mvnw javadoc:javadoc
+```
+
+Les fichiers generes sont places ici:
+
+- `target/reports/apidocs/`
+
+Ouvrir la page d'accueil de la doc (macOS):
+
+```bash
+open target/reports/apidocs/index.html
+```
+
 ## Utilisation dans l'interface
 
 1. Choisir le jeu: Sudoku ou Jeu de Dames.

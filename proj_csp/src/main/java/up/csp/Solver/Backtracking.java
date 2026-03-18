@@ -5,11 +5,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Solveur CSP par retour arriere avec options MRV et aleatoire.
+ *
+ * @author DUFRENE BASILE
+ */
 public class Backtracking {
     private Labelling strategy = Labelling.STANDARD;
     private boolean useRandom = false;
     private ForwardChecking fc = new ForwardChecking();
 
+    /**
+     * Lance la resolution d'un probleme CSP.
+     *
+     * @param problem probleme a resoudre
+     * @return true si une solution a ete trouvee, false sinon
+     */
     public boolean solve(CSP problem) {
         return backtrack(problem.getVariables(), problem.getConstraints());
     }
@@ -78,6 +89,17 @@ public class Backtracking {
     }
 
     // Setters pour le contrôleur
+    /**
+     * Definit la strategie de selection de variable.
+     *
+     * @param s strategie de labelling (STANDARD ou MRV)
+     */
     public void setLabellingStrategy(Labelling s) { this.strategy = s; }
+
+    /**
+     * Active ou desactive l'ordre aleatoire des valeurs du domaine.
+     *
+     * @param r true pour activer l'aleatoire, false sinon
+     */
     public void setRandomized(boolean r) { this.useRandom = r; }
 }
