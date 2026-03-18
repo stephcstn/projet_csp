@@ -2,13 +2,29 @@ package up.csp.Model;
 
 import java.util.List;
 
+/**
+ * Contrainte imposant des valeurs toutes differentes sur un ensemble de variables.
+ *
+ * @author DUFRENE BASILE
+ */
 public class AllDifferentConstraint implements Constraint {
     private List<Variable> scope;
 
+    /**
+     * Construit une contrainte AllDifferent sur un scope donne.
+     *
+     * @param scope variables soumises a la contrainte
+     */
     public AllDifferentConstraint(List<Variable> scope) {
         this.scope = scope;
     }
 
+    /**
+     * Verifie qu'aucune paire de variables assignees du scope ne partage la meme valeur.
+     *
+     * @param allVariables liste complete des variables du probleme
+     * @return true si la contrainte est satisfaite, false sinon
+     */
     @Override
     public boolean isSatisfied(List<Variable> allVariables) {
         for (int i = 0; i < scope.size(); i++) {
@@ -22,6 +38,12 @@ public class AllDifferentConstraint implements Constraint {
         return true;
     }
 
+    /**
+     * Retire la valeur assignee par trigger des domaines des autres variables du scope.
+     *
+     * @param trigger variable nouvellement assignee
+     * @param allVariables liste complete des variables du probleme
+     */
     @Override
     public void reduce(Variable trigger, List<Variable> allVariables) {
         if (!scope.contains(trigger) || trigger.getAssignedValue() == null) return;

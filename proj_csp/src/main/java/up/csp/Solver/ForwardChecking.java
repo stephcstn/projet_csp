@@ -5,10 +5,20 @@ import up.csp.Model.Constraint;
 import up.csp.Model.Assignment;
 import java.util.List;
 
+/**
+ * Mecanisme de forward-checking pour filtrer les domaines apres chaque assignation.
+ *
+ * @author DUFRENE BASILE
+ */
 public class ForwardChecking {
 
     /**
      * Exécute la réduction des domaines et vérifie si la recherche peut continuer.
+        *
+        * @param lastAssignment derniere assignation effectuee
+        * @param allVariables ensemble des variables du probleme
+        * @param constraints ensemble des contraintes a appliquer
+        * @return true si la recherche peut continuer, false si un domaine est vide
      */
     public boolean run(Assignment lastAssignment, List<Variable> allVariables, List<Constraint> constraints) {
         Variable trigger = lastAssignment.getVariable();

@@ -15,8 +15,22 @@ import up.csp.apps.SudokuApp;
 import up.csp.apps.DamesApp;
 import java.util.List;
 
+/**
+ * Controleur principal de l'interface JavaFX.
+ *
+ * @author DUFRENE BASILE
+ */
 public class MainController {
 
+    /**
+     * Lance la resolution selon les options choisies dans l'interface.
+     *
+     * @param app type de probleme selectionne
+     * @param strat strategie de labelling selectionnee
+     * @param mode mode de recherche (deterministe ou aleatoire)
+     * @param status label d'etat a mettre a jour
+     * @param container conteneur graphique du resultat
+     */
     public void handleSolve(String app, String strat, String mode, Label status, StackPane container) {
         container.getChildren().clear();
         CSP problem = app.equals("Sudoku") ? SudokuApp.createSudoku() : DamesApp.createDames(8);

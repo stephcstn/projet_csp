@@ -9,7 +9,17 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import up.csp.Controller.MainController;
 
+/**
+ * Interface graphique principale du solveur CSP.
+ *
+ * @author CASTAN STEPHANE
+ */
 public class MainApp extends Application {
+    /**
+     * Construit et affiche la fenetre principale.
+     *
+     * @param primaryStage fenetre principale JavaFX
+     */
     @Override
     public void start(Stage primaryStage) {
         MainController controller = new MainController();
