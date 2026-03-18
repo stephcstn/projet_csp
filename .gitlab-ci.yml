@@ -37,9 +37,10 @@ before_script:
 build-job:
   stage: build
   script:
-    - echo "--- ETAPE 1 :COMPILATION VIA PROXY ---"
+    - echo "--- COMPILATION DU SOLVEUR ---"
     - cd proj_csp
-    - - mvn $MAVEN_CLI_OPTS clean compile -Dmaven.compiler.excludes=module-info.java
+    # On ajoute l'exclusion du module-info pour passer l'erreur JavaFX
+    - mvn $MAVEN_CLI_OPTS clean compile -Dmaven.compiler.excludes=module-info.java
   artifacts:
     paths:
       - proj_csp/target/
