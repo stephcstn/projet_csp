@@ -32,8 +32,7 @@ variables:
 
 before_script:
   - apt-get update
-  # On installe Java 17 (plus stable pour vos projets) et Maven
-  - apt-get install -y openjdk-17-jdk maven
+  - apt-get install -y default-jdk maven
 
 build-job:
   stage: build
