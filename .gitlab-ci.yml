@@ -37,10 +37,12 @@ before_script:
 build-job:
   stage: build
   script:
-    - echo "--- COMPILATION DU SOLVEUR ---"
+    - echo "--- NETTOYAGE ET COMPILATION ---"
     - cd proj_csp
-    # On ajoute l'exclusion du module-info pour passer l'erreur JavaFX
-    - mvn $MAVEN_CLI_OPTS clean compile -Dmaven.compiler.excludes=module-info.java
+    # On supprime le fichier qui bloque tout avant que Maven ne le voie
+    - rm -f src/main/java/module-info.java
+    # On compile normalement
+    - mvn $MAVEN_CLI_OPTS clean compile
   artifacts:
     paths:
       - proj_csp/target/
