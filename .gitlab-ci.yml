@@ -16,8 +16,10 @@
 # This specific template is located at:
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
 
+# Image Docker avec Java 17 et Maven
 image: maven:3.9.6-eclipse-temurin-17
 
+# Optimisation : On cache les dépendances pour gagner du temps
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 
@@ -25,38 +27,42 @@ cache:
   paths:
     - .m2/repository
 
+# Définition de l'ordre des étapes
 stages:
   - build
   - test
   - deploy
 
+# Étape 1 : Compilation via le Maven Wrapper
 build-job:
   stage: build
   script:
-    - echo "--- ETAPE 1 : COMPILATION DU PROJET ---"
+    - echo "--- ETAPE 1 :COMPILATION DU PROJET ---"
     - chmod +x mvnw
     - ./mvnw clean compile
-    - echo "Succès : Le code Java est valide et compilé."
+    - echo "Succès :Le code Java est valide et compilé."
 
+# Étape 2 : Lancement des 30 tests unitaires du solveur
 unit-test-job:
   stage: test
   script:
-    - echo "--- ETAPE 2 : TESTS UNITAIRES (CSP SOLVER) ---"
+    - echo "--- ETAPE 2 :TESTS UNITAIRES (CSP SOLVER) ---"
     - chmod +x mvnw
     - ./mvnw test
-    - echo "Succès : Les 30 tests unitaires ont été validés."
+    - echo "Succès :Les 30 tests unitaires ont été validés."
   artifacts:
     when: always
     reports:
       junit: target/surefire-reports/TEST-*.xml
 
+# Étape 3 : Création du fichier .jar final
 deploy-job:
   stage: deploy
   script:
-    - echo "--- ETAPE 3 : GENERATION DE L'EXECUTABLE (JAR) ---"
+    - echo "--- ETAPE 3 :GENERATION DE L'EXECUTABLE (JAR) ---"
     - chmod +x mvnw
     - ./mvnw package -DskipTests
-    - echo "Succès : L'archive JAR a été générée dans le dossier target/."
+    - echo "Succès :L'archive JAR a été générée."
   artifacts:
     paths:
       - target/*.jar
