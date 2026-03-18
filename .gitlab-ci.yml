@@ -54,6 +54,7 @@ test-job:
   script:
     - echo "--- ETAPE 2 :TESTS JUNIT ---"
     - cd proj_csp
+    - rm -f src/main/java/module-info.java
     - mvn $MAVEN_CLI_OPTS test
   artifacts:
     when: always
