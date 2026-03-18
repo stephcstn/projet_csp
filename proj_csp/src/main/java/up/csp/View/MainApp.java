@@ -33,11 +33,11 @@ public class MainApp extends Application {
         Label statusLabel = new Label("Prêt");
         StackPane resultContainer = new StackPane();
 
-        // 4. Mise à jour de l'action du bouton (Passage de 5 arguments)
+        // 4. Mise à jour de l'action du bouton
         solveButton.setOnAction(e -> controller.handleSolve(
                 appSelector.getValue(),
                 strategySelector.getValue(),
-                modeSelector.getValue(), // On envoie le choix du mode ici
+                modeSelector.getValue(),
                 statusLabel,
                 resultContainer
         ));

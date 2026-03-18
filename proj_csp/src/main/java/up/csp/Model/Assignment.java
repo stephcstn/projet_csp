@@ -6,7 +6,7 @@ package up.csp.Model;
 public class Assignment {
     private Variable variable;
     private int value;
-    private String reason; // La "raison" ou "motif" (ex: "Backtracking", "Forward-Checking")
+    private String reason; // (ex: "Backtracking", "Forward-Checking")
 
     public Assignment(Variable variable, int value, String reason) {
         this.variable = variable;

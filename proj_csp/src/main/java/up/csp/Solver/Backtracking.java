@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Backtracking {
     private Labelling strategy = Labelling.STANDARD;
-    private boolean useRandom = false; // Le fameux switch
+    private boolean useRandom = false;
     private ForwardChecking fc = new ForwardChecking();
 
     public boolean solve(CSP problem) {
@@ -34,7 +34,7 @@ public class Backtracking {
 
         // 3. Exploration des branches
         for (int val : valuesToTest) {
-            boolean[][] backup = saveDomains(vars); // Sauvegarde avant FC
+            boolean[][] backup = saveDomains(vars);
 
             current.setAssignedValue(val);
             Assignment assign = new Assignment(current, val, "Search");

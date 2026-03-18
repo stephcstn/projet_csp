@@ -17,7 +17,6 @@ import java.util.List;
 
 public class MainController {
 
-    // BIEN VÉRIFIER CETTE LIGNE (4 paramètres)
     public void handleSolve(String app, String strat, String mode, Label status, StackPane container) {
         container.getChildren().clear();
         CSP problem = app.equals("Sudoku") ? SudokuApp.createSudoku() : DamesApp.createDames(8);
@@ -26,7 +25,7 @@ public class MainController {
 
         // Configuration dynamique
         solver.setLabellingStrategy(strat.equals("MRV") ? Labelling.MRV : Labelling.STANDARD);
-        solver.setRandomized(mode.equals("Aléatoire")); // On active l'aléa ici
+        solver.setRandomized(mode.equals("Aléatoire"));
 
         if (solver.solve(problem)) {
             status.setText("Solution trouvée (" + mode + ") !");
@@ -36,7 +35,7 @@ public class MainController {
         }
     }
 
-    // DÉFINITION : 4 ARGUMENTS (Correct pour Sudoku)
+    // DÉFINITION : 4 ARGUMENTS Sudoku
     private void renderCell(GridPane grid, int row, int col, Variable var) {
         StackPane cell = new StackPane();
         Rectangle box = new Rectangle(45, 45);
@@ -51,7 +50,7 @@ public class MainController {
         grid.add(cell, col, row);
     }
 
-    // DÉFINITION : 5 ARGUMENTS (Correct pour Dames)
+    // DÉFINITION : 5 ARGUMENTS Dames
     private void renderCellForDames(GridPane grid, int row, int col, boolean hasQueen, boolean isDark) {
         StackPane cell = new StackPane();
         Rectangle box = new Rectangle(50, 50);
@@ -60,8 +59,8 @@ public class MainController {
 
         Text text = new Text();
         if (hasQueen) {
-            text.setText("Q"); // Utilise "Q" si l'émoji ne passe pas
-            text.setFill(Color.DARKRED); // Couleur vive pour être sûr de la voir
+            text.setText("Q");
+            text.setFill(Color.DARKRED);
             text.setStyle("-fx-font-size: 30px; -fx-font-weight: bold;");
         }
 
@@ -75,17 +74,12 @@ public class MainController {
         grid.setPadding(new Insets(10));
 
         if (type.equals("Sudoku")) {
-            // --- LOGIQUE SUDOKU ---
-            // On a 81 variables (une par case), donc on boucle sur la liste
             for (int i = 0; i < variables.size(); i++) {
                 int row = i / 9;
                 int col = i % 9;
-                // Appel à la méthode de rendu à 4 arguments
                 renderCell(grid, row, col, variables.get(i));
             }
         } else {
-            // --- LOGIQUE DAMES ---
-            // On a 8 variables (une par ligne), on dessine 64 cases (8x8)
             for (int row = 0; row < 8; row++) {
                 Variable rowVar = variables.get(row);
                 Integer queenCol = rowVar.getAssignedValue();
@@ -93,7 +87,6 @@ public class MainController {
                 for (int col = 0; col < 8; col++) {
                     boolean hasQueen = (queenCol != null && queenCol == (col + 1));
                     boolean isDark = (row + col) % 2 == 1;
-                    // Appel à la méthode de rendu à 5 arguments
                     renderCellForDames(grid, row, col, hasQueen, isDark);
                 }
             }
