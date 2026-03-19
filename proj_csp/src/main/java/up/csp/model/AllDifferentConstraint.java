@@ -8,12 +8,12 @@ import java.util.List;
  * @author DUFRENE BASILE
  */
 public class AllDifferentConstraint implements Constraint {
-    private List<Variable> scope;
+    private final List<Variable> scope;
 
     /**
      * Construit une contrainte AllDifferent sur un scope donne.
      *
-     * @param scope variables soumises a la contrainte
+     * @param scope variables soumises à la contrainte
      */
     public AllDifferentConstraint(List<Variable> scope) {
         this.scope = scope;
@@ -29,10 +29,13 @@ public class AllDifferentConstraint implements Constraint {
     public boolean isSatisfied(List<Variable> allVariables) {
         for (int i = 0; i < scope.size(); i++) {
             Integer val1 = scope.get(i).getAssignedValue();
-            if (val1 == null) continue;
-            for (int j = i + 1; j < scope.size(); j++) {
-                Integer val2 = scope.get(j).getAssignedValue();
-                if (val1.equals(val2)) return false;
+            if (val1 != null){
+                for (int j = i + 1; j < scope.size(); j++) {
+                    Integer val2 = scope.get(j).getAssignedValue();
+                    if (val1.equals(val2)){
+                        return false;
+                    }
+                }
             }
         }
         return true;
@@ -46,7 +49,9 @@ public class AllDifferentConstraint implements Constraint {
      */
     @Override
     public void reduce(Variable trigger, List<Variable> allVariables) {
-        if (!scope.contains(trigger) || trigger.getAssignedValue() == null) return;
+        if (!scope.contains(trigger) || trigger.getAssignedValue() == null){
+            return;
+        }
         int val = trigger.getAssignedValue();
         for (Variable v : scope) {
             if (v != trigger && v.getAssignedValue() == null) {
