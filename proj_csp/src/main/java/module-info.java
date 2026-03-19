@@ -1,14 +1,18 @@
 module up.csp {
     requires javafx.controls;
-    requires javafx.graphics;
+    requires javafx.fxml;
     requires javafx.swing;
+    requires java.desktop;
 
-    exports up.csp.View;
-    exports up.csp.Controller;
-    exports up.csp.Model;
-    exports up.csp.Solver;
+    // Attention aux MAJUSCULES ici (View, Controller, apps)
+    // On n'ouvre que ce qui existe vraiment sur ton image
+
+    opens up.csp.apps to javafx.graphics, javafx.fxml;
+    opens up.csp.view to javafx.graphics, javafx.fxml;
+    opens up.csp.controller to javafx.fxml;
+
     exports up.csp.apps;
-
-    opens up.csp.View to javafx.graphics;
-    opens up.csp.Controller to javafx.controls;
+    exports up.csp.view;
+    exports up.csp.model;
+    exports up.csp.solver;
 }

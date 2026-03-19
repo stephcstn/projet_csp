@@ -1,6 +1,6 @@
 package up.csp.apps;
 
-import up.csp.Model.*;
+import up.csp.model.*;
 import java.util.ArrayList;
 import java.util.List;
 

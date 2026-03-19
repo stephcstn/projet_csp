@@ -40,8 +40,8 @@ build-job:
     - echo "--- VERIFICATION DE LA SYNCHRO AVEC MAIN ---"
     # On récupère les dernières infos du serveur
     - git fetch origin main
-    # On vérifie si le main est déjà inclus dans notre branche
-    # Si 'git merge-base' ne renvoie pas l'ID du main, c'est qu'on n'est pas à jour
+    # On vérifie si main est déjà inclus dans notre branche
+    # Si 'git merge-base' ne renvoie pas l'ID main, c'est qu'on n'est pas à jour.
     - git merge-base --is-ancestor origin/main HEAD || (echo "ERREUR :Votre branche n'est pas à jour par rapport au main. Faites un git merge main !" && exit 1)
     - echo "--- NETTOYAGE ET COMPILATION ---"
     - cd proj_csp

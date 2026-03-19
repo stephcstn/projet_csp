@@ -1,7 +1,7 @@
 package up;
 
 import javafx.application.Application;
-import up.csp.View.MainApp;
+import up.csp.view.MainApp;
 
 /**
  * Point d'entree de l'application JavaFX.
