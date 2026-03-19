@@ -23,6 +23,7 @@ stages:
   - build
   - test
   - package
+  - deploy-docs
 
 variables:
   # Configuration du Proxy de l'université
@@ -73,8 +74,6 @@ test-job:
 package-job:
   stage: package
   needs: ["test-job"]
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
   script:
     - echo "--- CREATION DU PAQUET (JAR) ---"
     - cd proj_csp
@@ -83,3 +82,37 @@ package-job:
     paths:
       - proj_csp/target/*.jar
     expire_in: 1 week
+  only:
+    - main
+
+pages:
+  stage: deploy-docs
+  needs: ["test-job"]
+  script:
+    - echo "--- GÉNÉRATION DE LA DOCUMENTATION ---"
+    - cd proj_csp
+    
+    # 1. Générer la Javadoc avec Maven
+    - mvn $MAVEN_CLI_OPTS javadoc:javadoc
+    
+    # 2. Revenir à la racine pour MkDocs
+    - cd ..
+    - mkdocs build
+    
+    # 3. Préparer le dossier public pour GitLab Pages
+    # On crée le dossier 'public' (obligatoire pour GitLab)
+    - mkdir -p public
+    
+    # On déplace le site MkDocs dans public
+    - cp -r site/* public/
+    
+    # On crée un sous-dossier pour la Javadoc afin qu'elle soit accessible via /apidocs
+    - mkdir -p public/apidocs
+    - cp -r proj_csp/target/reports/apidocs/* public/apidocs/
+    
+  artifacts:
+    paths:
+      - public
+    expire_in: 1 week
+  only:
+    - main
