@@ -1,4 +1,4 @@
-package up;
+package up.csp;
 
 import javafx.application.Application;
 import up.csp.view.MainApp;

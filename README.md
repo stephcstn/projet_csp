@@ -50,7 +50,7 @@ cd proj_csp
 
 ## Lancer l'application (via Launcher)
 
-Le `pom.xml` est configure pour lancer `up.Launcher` avec JavaFX.
+Le `pom.xml` est configure pour lancer `up.csp.Launcher` avec JavaFX.
 
 ```bash
 ./mvnw javafx:run
@@ -97,5 +97,5 @@ open target/reports/apidocs/index.html
 Valeur attendue:
 
 ```xml
-<mainClass>up.csp/up.Launcher</mainClass>
+<mainClass>up.csp/up.csp.Launcher</mainClass>
 ```
