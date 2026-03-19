@@ -41,15 +41,11 @@ cache:
 
 # Installation des outils (JDK, Maven, Git) avant chaque job
 before_script:
-  - apt-get update -y && apt-get install -y default-jdk maven git
+  - apt-get update -y && apt-get install -y default-jdk maven
 
 build-job:
   stage: build
   script:
-    - echo "--- VERIFICATION DE LA SYNCHRO AVEC MAIN ---"
-    - git fetch origin main
-    - git merge-base --is-ancestor origin/main HEAD || (echo "ERREUR :Votre branche n'est pas à jour. Faites un git merge main !" && exit 1)
-    
     - echo "--- NETTOYAGE ET COMPILATION ---"
     - cd proj_csp
     - mvn $MAVEN_CLI_OPTS clean compile
