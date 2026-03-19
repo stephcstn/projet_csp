@@ -77,10 +77,11 @@ test-job:
 package-job:
   stage: package
   needs: ["test-job"]
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
   script:
     - echo "--- CREATION DU PAQUET (JAR) ---"
     - cd proj_csp
-    - rm -f src/main/java/module-info.java
     - mvn $MAVEN_CLI_OPTS package -DskipTests
   artifacts:
     paths:
