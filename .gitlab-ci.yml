@@ -71,6 +71,7 @@ test-job:
       - proj_csp/target/surefire-reports/
     reports:
       junit: proj_csp/target/surefire-reports/TEST-*.xml
+    expire_in: 1 week
 
 # NOUVEAU JOB : Création du fichier JAR final (le livrable)
 package-job:
