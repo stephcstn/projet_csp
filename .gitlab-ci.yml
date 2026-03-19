@@ -18,36 +18,40 @@
 
 image: debian:latest
 
+# Définition des étapes de la pipeline
 stages:
   - build
   - test
-  - deploy
+  - package
 
 variables:
   # Configuration du Proxy de l'université
   HTTPS_PROXY: "http://cache.univ-poitiers.fr:3128"
   HTTP_PROXY: "http://cache.univ-poitiers.fr:3128"
-  # Options pour forcer Maven à passer par le proxy
+  
+  # Options Maven : On ajoute le dossier local pour le CACHE
+  # $CI_PROJECT_DIR est une variable automatique de GitLab qui pointe vers la racine de ton projet
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
   MAVEN_CLI_OPTS: "-Dhttp.proxyHost=cache.univ-poitiers.fr -Dhttp.proxyPort=3128 -Dhttps.proxyHost=cache.univ-poitiers.fr -Dhttps.proxyPort=3128"
 
+# LE CACHE : Permet de ne pas retélécharger les librairies Java à chaque fois
+cache:
+  paths:
+    - .m2/repository
+
+# Installation des outils (JDK, Maven, Git) avant chaque job
 before_script:
-  - apt-get update
-  - apt-get install -y default-jdk maven git
+  - apt-get update -y && apt-get install -y default-jdk maven git
 
 build-job:
   stage: build
   script:
     - echo "--- VERIFICATION DE LA SYNCHRO AVEC MAIN ---"
-    # On récupère les dernières infos du serveur
     - git fetch origin main
-    # On vérifie si main est déjà inclus dans notre branche
-    # Si 'git merge-base' ne renvoie pas l'ID main, c'est qu'on n'est pas à jour.
-    - git merge-base --is-ancestor origin/main HEAD || (echo "ERREUR :Votre branche n'est pas à jour par rapport au main. Faites un git merge main !" && exit 1)
+    - git merge-base --is-ancestor origin/main HEAD || (echo "ERREUR :Votre branche n'est pas à jour. Faites un git merge main !" && exit 1)
+    
     - echo "--- NETTOYAGE ET COMPILATION ---"
     - cd proj_csp
-    # On supprime le fichier qui bloque tout avant que Maven ne le voie
-    - rm -f src/main/java/module-info.java
-    # On compile normalement
     - mvn $MAVEN_CLI_OPTS clean compile
   artifacts:
     paths:
@@ -58,10 +62,8 @@ test-job:
   stage: test
   needs: ["build-job"]
   script:
-    - echo "--- RECHERCHE FORCEE DES TESTS JUNIT 5 ---"
+    - echo "--- RECHERCHE DES TESTS JUNIT 5 ---"
     - cd proj_csp
-    - rm -f src/main/java/module-info.java
-    # On force Maven à utiliser le moteur JUnit Jupiter et on scanne les fichiers
     - mvn $MAVEN_CLI_OPTS test -Dsurefire.includeJUnit5Engines=junit-jupiter
   artifacts:
     when: always
@@ -69,12 +71,17 @@ test-job:
       - proj_csp/target/surefire-reports/
     reports:
       junit: proj_csp/target/surefire-reports/TEST-*.xml
-    expire_in: 1 week
 
-deploy-job:
-  stage: deploy
+# NOUVEAU JOB : Création du fichier JAR final (le livrable)
+package-job:
+  stage: package
+  needs: ["test-job"]
   script:
-    - echo "--- ETAPE 3 :DEPLOIEMENT ---"
-    - echo "TAG détecté = ${CI_COMMIT_TAG}"
-  only:
-    - tags
+    - echo "--- CREATION DU PAQUET (JAR) ---"
+    - cd proj_csp
+    - rm -f src/main/java/module-info.java
+    - mvn $MAVEN_CLI_OPTS package -DskipTests
+  artifacts:
+    paths:
+      - proj_csp/target/*.jar
+    expire_in: 1 week
