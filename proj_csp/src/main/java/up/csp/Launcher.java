@@ -14,8 +14,9 @@ public class Launcher {
      *
      * @param args arguments de la ligne de commande
      */
-    public static void main(String[] args){
-        // On appelle la méthode statique launch en lui passant la classe de l'application
-        Application.launch(MainApp.class, args);
+    public static void main(String[] args) {
+            // On ne fait PAS Application.launch ici.
+            // On appelle une méthode dans MainApp qui, elle, s'occupera de JavaFX.
+            MainApp.main(args);
     }
 }

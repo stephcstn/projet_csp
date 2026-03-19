@@ -70,4 +70,8 @@ public class MainApp extends Application {
         primaryStage.setTitle("up.csp - Solveur Graphique");
         primaryStage.show();
     }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
 }
