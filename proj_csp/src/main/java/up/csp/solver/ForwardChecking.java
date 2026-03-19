@@ -17,7 +17,7 @@ public class ForwardChecking {
         *
         * @param lastAssignment derniere assignation effectuee
         * @param allVariables ensemble des variables du probleme
-        * @param constraints ensemble des contraintes a appliquer
+        * @param constraints ensemble des contraintes à appliquer
         * @return true si la recherche peut continuer, false si un domaine est vide
      */
     public boolean run(Assignment lastAssignment, List<Variable> allVariables, List<Constraint> constraints) {

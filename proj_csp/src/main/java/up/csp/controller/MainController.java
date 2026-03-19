@@ -33,12 +33,22 @@ public class MainController {
      */
     public void handleSolve(String app, String strat, String mode, Label status, StackPane container) {
         container.getChildren().clear();
-        CSP problem = app.equals("Sudoku") ? SudokuApp.createSudoku() : DamesApp.createDames(8);
+        CSP problem = switch (app) {
+            case "Sudoku" -> SudokuApp.createSudoku();
+            case "Dames"  -> DamesApp.createDames(8);
+            default      -> throw new IllegalArgumentException("Application inconnue : " + app);
+        };
 
         Backtracking solver = new Backtracking();
 
         // Configuration dynamique
-        solver.setLabellingStrategy(strat.equals("MRV") ? Labelling.MRV : Labelling.STANDARD);
+        if (strat.equals("MRV")) {
+            solver.setLabellingStrategy(Labelling.MRV);
+        } else {
+            // Par défaut, on utilise la stratégie STANDARD
+            solver.setLabellingStrategy(Labelling.STANDARD);
+        }
+
         solver.setRandomized(mode.equals("Aléatoire"));
 
         if (solver.solve(problem)) {
@@ -56,7 +66,15 @@ public class MainController {
         box.setFill(Color.WHITE);
         box.setStroke(Color.GRAY);
 
-        String val = (var.getAssignedValue() != null) ? var.getAssignedValue().toString() : "";
+        String val;
+        if (var.getAssignedValue() != null) {
+            // Si la case a un chiffre, on le transforme en texte pour l'affichage
+            val = var.getAssignedValue().toString();
+        } else {
+            // Si la case est vide (null), on affiche une chaîne vide ""
+            val = "";
+        }
+
         Text text = new Text(val);
         text.setStyle("-fx-font-size: 18px;");
 
