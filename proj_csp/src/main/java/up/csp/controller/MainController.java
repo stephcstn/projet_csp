@@ -35,7 +35,7 @@ public class MainController {
         container.getChildren().clear();
         CSP problem = switch (app) {
             case "Sudoku" -> SudokuApp.createSudoku();
-            case "Dames"  -> DamesApp.createDames(8);
+            case "Jeu de Dames"  -> DamesApp.createDames(8);
             default      -> throw new IllegalArgumentException("Application inconnue : " + app);
         };
 
