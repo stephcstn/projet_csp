@@ -42,7 +42,7 @@ public class MainControllerTest {
         StackPane container = new StackPane();
 
         // 2. Exécution
-        controller.handleSolve("Dames", "Standard", "Standard", status, container);
+        controller.handleSolve("Jeu De Dames", "Standard", "Standard", status, container);
 
         // 3. Vérification
         assertEquals("Solution trouvée (Standard) !", status.getText());
