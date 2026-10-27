@@ -1,0 +1,51 @@
+name: CI Java CSP
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  ci-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Configurer Java (JDK 17) et le cache Maven
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: Compiler le projet
+        working-directory: proj_csp
+        run: mvn clean compile
+
+      - name: Exécuter les tests JUnit 5
+        working-directory: proj_csp
+        run: mvn test -Dsurefire.includeJUnit5Engines=junit-jupiter
+
+      - name: Sauvegarder les rapports de tests (Artifact)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: proj_csp/target/surefire-reports/
+          retention-days: 7
+
+      - name: Générer le package JAR (branche main uniquement)
+        if: github.ref == 'refs/heads/main'
+        working-directory: proj_csp
+        run: mvn package -DskipTests
+
+      - name: Sauvegarder le livrable JAR (Artifact)
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: jar-package
+          path: proj_csp/target/*.jar
+          retention-days: 7
